@@ -2,10 +2,19 @@
 	'use strict';
 	//global injection
 	//Always to be the first of app.js
+	//global.appConfig=require('application/configurations/appConfig').config;
+	
+
 	var app=angular.module('restoApp',['ngRoute'])
 
-	global.appConfig=require('application/configurations/appConfig').config;
-	
+	//Register the global configuration
+	app.provider('appConfig',function AppConfigProvider(){
+		var appConfig=require('application/configurations/appConfig').config;
+		this.$get=function(){
+			return appConfig;
+		}
+	});
+
 	//Register the routers
 	var router=require('application/configurations/router').getInstance();
 	router.config(app);	

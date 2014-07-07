@@ -4,27 +4,26 @@ var Router=function(app){
 }
 
 Router.prototype.config=function(app){
-	app.config(['$routeProvider',function($routeProvider){
-		$routeProvider
-			.when('/member',{
-				templateUrl: 'views/member.html'
-				,controller: 'memberCtrl'
+	app.config(['$routeProvider','appConfigProvider',function($routeProvider,appConfig){
+		var defaultRoute=null;
+		debugger;
+		var menus=appConfig.menus;
+		menus.forEach(function(menu){
+			$routeProvider.when(menu.url,{
+				templateUrl: menu.view
+				,controller: menu.controller
+			});
+			if(menu.isDefault===true)
+			{
+				defaultRoute=menu;
+			}
+		})
+		if(defaultRoute!=null)
+		{
+			$routeProvider.otherwise({
+				redirectTo: defaultRoute.url
 			})
-			.when('/resto',{
-				templateUrl: 'views/resto.html'
-				,controller: 'restoCtrl'
-			})
-			.when('/location',{
-				templateUrl: 'views/location.html'
-				,controller: 'locationCtrl'
-			})
-			.when('/contact',{
-				templateUrl: 'views/contact.html'
-				,controller: 'contactCtrl'
-			})
-			.otherwise({
-				redirectTo: '/member'
-			})
+		}
 	}])
 }
 exports.getInstance=function()

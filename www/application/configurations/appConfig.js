@@ -1,10 +1,10 @@
 var config={
-	'appName' : 'Project E.'
+	'appName' : 'Learn&Fun'
 	,'menus' : [
-		{name : 'Member' , url : '/member'}
-		,{name : 'Resto' , url : '/resto'}
-		,{name : 'Location' , url : '/location'}
-		,{name :'Contact' , url : '/contact'}
+		{name : 'My Dog' , url : '/myDog', isDefault: true, controller:'dogCtrl',view:'views/dog.html'}
+		,{name : 'Feed My Dog' , url : '/feed', controller:'feedCtrl',view:'views/feed.html'}
+		,{name : 'Challenge' , url : '/callenge',controller:'challengeCtrl', view: 'views/challenge.html'}
+		,{name :'About' , url : '/about', controller: 'aboutCtrl', view: 'views/about.html'}
 	]
 }
 exports.config=config;

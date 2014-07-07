@@ -11,7 +11,7 @@ Ctrl.prototype.include=function(controllerName)
 Ctrl.prototype.config=function(app)
 {
 	var ctrlFn=app.controller;
-	ctrlFn('memberCtrl',this.include('memberController'));
+	ctrlFn('dogCtrl',this.include('dogController'));
 }
 exports.getInstance=function(){
 	return new Ctrl();
