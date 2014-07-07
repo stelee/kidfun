@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 BAAS@leesoft
 ====
 
@@ -85,3 +86,9 @@ Then, you can write the handler.In the backend_handlers, you can find the *login
 - The client can use header[Authentication]="Basic ..." to pass the username and password to the service
 - The client can also use header[Authentication]="Token ..." by adding the token from the login service to access other privilege required services and get the server-side session object to get/set the temporary object.
 
+=======
+kidfun
+======
+
+This is a small project written in AngularJS for my son
+>>>>>>> c72e76a95a8b89d29f0c9b91e0efbd5cc4d67989
