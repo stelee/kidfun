@@ -6,8 +6,7 @@ var Router=function(app){
 Router.prototype.config=function(app){
 	app.config(['$routeProvider','appConfigProvider',function($routeProvider,appConfig){
 		var defaultRoute=null;
-		debugger;
-		var menus=appConfig.menus;
+		var menus=appConfig.appConfig.menus;
 		menus.forEach(function(menu){
 			$routeProvider.when(menu.url,{
 				templateUrl: menu.view

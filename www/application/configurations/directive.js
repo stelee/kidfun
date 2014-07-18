@@ -10,10 +10,15 @@ Directive.prototype.include=function(directiveName)
 }
 Directive.prototype.config=function(app)
 {
-	var innerFn=app.directive;
-	innerFn('mpHeader',this.include('mp-header-directive'));
-	innerFn('mpMemberCard',this.include('mp-member-card-directive'));
-	innerFn('mpBarcode',this.include('mp-barcode-directive'));
+	var that=this;
+	var directive=function(directiveName)
+	{
+		app.directive(directiveName,that.include(directiveName));
+	}
+	directive('mpHeader');
+	directive('mpMemberCard');
+	directive('mpBarcode');
+	directive('mpAnimation');
 }
 exports.getInstance=function(){
 	return new Directive();

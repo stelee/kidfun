@@ -4,16 +4,14 @@ module.exports=function(){
 		restrict: 'E'
 		,scope: {}
 		,templateUrl: "views/templates/mp-header-directive-tmp.html"
-		,link : function(scope)
-		{
-			scope.menus=appConfig.menus;
+		,controller : ['$scope', 'appConfig',function($scope,appConfig){
+			$scope.menus=appConfig.menus;
 			//for the first
-			if(scope.menus[0])
+			if($scope.menus[0])
 			{
-				scope.menus[0].selected=true;
+				$scope.menus[0].selected=true;
 			}
-		}
-		,controller : ['$scope', function($scope){
+			$scope.title=appConfig.appName;
 			$scope.setSelected=function(menu)
 			{
 				$scope.menus.forEach(function(menu){
