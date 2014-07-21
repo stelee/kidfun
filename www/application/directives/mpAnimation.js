@@ -8,6 +8,7 @@ var setFrame=function($imgEl,frame)
 		},500);
 	});
 }
+
 module.exports=function(){
 	return {
 		restrict: 'E'
@@ -17,25 +18,15 @@ module.exports=function(){
 		,templateUrl: "views/templates/mp-animation-directive-tmp.html"
 		,link : function(scope,element,attr){
 			var frameArr=scope.frames.split("|");
-			var $imgEl=$(element).find("img");
-			$imgEl.attr("src",frameArr[0]);
-			var promises=[];
-			for(var i=0;i<frameArr.length;i++)
-			{
-				promises.push(function(){
-					setFrame($imgEl,frameArr[i])
-				});
-			}
-			for(var i=0;i<frameArr.length;i++)
-			{
-				promises.push(function(){
-					setFrame($imgEl,frameArr[i])
-				});
-			}
 
-			setInterval(function(){
-				Promise.all(promises);
-			},5000)
+			var $imgEl=$(element).find("canvas");
+			//adjust the height
+			$imgEl.height(
+				($(document).height() - $imgEl.offset().top)*0.9
+			);
+			// $imgEl.attr("src",frameArr[0]);
+			var animationPlayer=require('libs/animationPlayer').getInstance();
+			animationPlayer.play($imgEl,frameArr);
 		}
 	};
 }
