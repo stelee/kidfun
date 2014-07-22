@@ -6,5 +6,6 @@ var config={
 		,{name : 'Challenge' , url : '/callenge',controller:'challengeCtrl', view: 'views/challenge.html'}
 		,{name :'About' , url : '/about', controller: 'aboutCtrl', view: 'views/about.html'}
 	]
+	,'migrationVersion' : 1
 }
 exports.config=config;

@@ -60,6 +60,7 @@ body {
 {
 	max-width: 80%
 	margin:auto;
+	min-height: 400px;
 }
 
 .animationFrame > canvas
