@@ -1,12 +1,46 @@
 //require.js
-//version 2.0.0
+//version 2.1.0
+(function(scope){
+	'use strict'
 
-(function(global){
 	var CONFIG_REQUIRE_ONCE=true;
+	var __module_cache__={};
+	var config={
+		async:false,
+		alias: {
+			require : "require",
+			injection: "injection",
+			mix: "mix_traits"
+		}
+	}
 
-	if(CONFIG_REQUIRE_ONCE)
-	{
-		global.__module_cache__={};
+	var pathResolver=function(path){
+		if(config.pathResolver)
+		{
+			return config.pathResolver(path);
+		}
+		else
+		{
+			if(path.match(/\.js$/g)===null)
+			{
+				path += ".js";
+			}
+			return path;
+		}
+	}
+
+	var contentResolver=function(path,callback){
+		var ret=null;
+		path=pathResolver(path);
+		ajaxGet(path,function(data){
+			if("function"==typeof(callback)){
+				callback(data);
+			}else
+			{
+				ret=data;
+			}
+		})
+		return ret;
 	}
 
 	var errorHandler=function(url,xmlHttpRequest,textStatus)
@@ -15,7 +49,7 @@
 	}
 	var createXMLHTTPRequest=function(){
 		if(window.XMLHttpRequest){//firefox,mozillar, opera,safari,IE7, IE8
-			xmlHttpRequest=new XMLHttpRequest();
+			var xmlHttpRequest=new XMLHttpRequest();
 			if(xmlHttpRequest.overrideMimeType){
 				xmlHttpRequest.overrideMimeType("text/xml");
 			}
@@ -27,7 +61,7 @@
 		}
 	}
 	var ajaxGet=function(url,callback){
-		if('function'!=typeof(jQuery)){//work with jquery
+		if('function'!=typeof(jQuery)){//work with no jquery
 			var xmlHttpRequest=createXMLHTTPRequest();
 			xmlHttpRequest.onreadystatechange=function(){
 				if(xmlHttpRequest.readyState==4){
@@ -39,12 +73,12 @@
 					}
 				}
 			}
-			xmlHttpRequest.open('GET',url,webnpm.config.async);
+			xmlHttpRequest.open('GET',url,config.async);
 			xmlHttpRequest.send();
 		}else
 		{
 			jQuery.ajax(url,{
-				async:webnpm.config.async,
+				async:config.async,
 				dataType:"html",
 				scriptCharset:"UTF-8",
 				success:function(data)
@@ -58,12 +92,22 @@
 		}
 	}
 
-	var webnpmEval=function(jsBlock,filePath){
-		try{
-			if(jsBlock.indexOf(webnpm.config.alias_define+"(function")!=0){
-				jsBlock=webnpm.config.alias_define+"(function(require,exports,module,scope){"+jsBlock+"})";
+	var define=function(fn){
+		if("object"==typeof(fn)){
+		    return fn;
+		}else if("function"==typeof(fn)){
+			var module={
+			  exports:{}
 			}
-			return eval(jsBlock);
+			fn(require,module.exports,module,scope);
+			return module.exports;
+		}
+	}
+
+	var webnpmEval=function(content,filePath){
+		try{
+			var fn=new Function("require","exports","module","scope",content);
+			return define(fn);
 		}catch(exception)
 		{
 			console.error("error on "+filePath)
@@ -74,78 +118,16 @@
 		
 	}
 
-	
-
-	//create the namespace of the requirejs
-	var webnpm={};
-	global.webnpm=webnpm;
-	webnpm.config={
-		contentResolver:function(path,callback){//basic path resolver
-			var ret=null;
-			path=webnpm.config.pathResolver(path);
-			ajaxGet(path,function(data){
-				if("function"==typeof(callback)){
-					callback(data);
-				}else
-				{
-					ret=data;
-				}
-			})
-			return ret;
-		},
-		pathResolver:function(path){
-			return path;
-		},
-		async:false,
-		alias_require:"require",
-		alias_define:"define",
-		alias_injection:"injection",
-		alias_deprecated:"deprecated",
-		alias_mix:"mix_traits",
-		alias_inherit:"inherit"
-	}
-	//public function
-	//there will be the conflicts with the other js package mangement solution
-
-	webnpm.deprecated=function(fn,fnName,description){
-		console.warn("the function "+fnName+" will be deprecated,"+description);
-		return fn;
-	}
-
-	webnpm.define=function(fn){
-		if("object"==typeof(fn)){
-		    return fn;
-		}else if("function"==typeof(fn)){
-			var module={
-			  exports:{}
-			}
-			fn(webnpm.require,module.exports,module,global);
-			return module.exports;
-		}
-	}
-	webnpm.require=function(path,contentResolver,callback){
-
-		if(path.match(/\.js$/g)===null)
+	var require=function(path,callback){
+		if(CONFIG_REQUIRE_ONCE&&__module_cache__[path])
 		{
-			path += ".js";
-		}
-
-		if(CONFIG_REQUIRE_ONCE&&global.__module_cache__[path])
-		{
-			return global.__module_cache__[path];
-		}
-		if('undefined'==typeof(contentResolver)){
-			contentResolver=webnpm.config.contentResolver;
-		}
-		if('undefined'==typeof(callback))
-		{
-			callback=webnpm.config.callback;
+			return __module_cache__[path];
 		}
 		if("function"==typeof(callback)){
 			contentResolver(path,function(content){
 				var obj=webnpmEval(content,path);
 				if(CONFIG_REQUIRE_ONCE){
-					global.__module_cache__[path]=obj;
+					__module_cache__[path]=obj;
 				}
 				callback(obj);
 			})
@@ -153,7 +135,7 @@
 			var content=contentResolver(path);
 			var obj=webnpmEval(content,path);
 			if(CONFIG_REQUIRE_ONCE){
-				global.__module_cache__[path]=obj;
+				__module_cache__[path]=obj;
 			}
 			
 			return obj;
@@ -161,14 +143,7 @@
 		
 	}
 
-	webnpm.injection=function(path,contentResolver,callback){
-		if('undefined'==typeof(contentResolver)){
-			contentResolver=webnpm.config.contentResolver;
-		}
-		if('undefined'==typeof(callback))
-		{
-			callback=webnpm.config.callback;
-		}
+	var injection=function(path,callback){
 		if("function"==typeof(callback)){
 			contentResolver(path,function(content){
 				callback(eval(content));
@@ -179,19 +154,15 @@
 		}
 	}
 
-	webnpm.mix=function(targetClass, traits){
+	var mix=function(targetClass, traits){
 		for(prop in traits){
 			targetClass.prototype[prop]=traits[prop];
 		}
 	}
 
 	//register alias
-	global[webnpm.config.alias_define]=webnpm.define;
-	global[webnpm.config.alias_require]=webnpm.require;
-	global[webnpm.config.alias_injection]=webnpm.injection;
-	global[webnpm.config.alias_deprecated]=webnpm.deprecated;
-	global[webnpm.config.alias_mix]=webnpm.mix;
-	global[webnpm.config.alias_inherit]=webnpm.inherit;
-
-
+	
+	scope[config.alias.require]=require;
+	scope[config.alias.injection]=injection;
+	scope[config.alias.mix]=mix;
 })(this);

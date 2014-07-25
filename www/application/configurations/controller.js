@@ -11,7 +11,9 @@ Ctrl.prototype.include=function(controllerName)
 Ctrl.prototype.config=function(app)
 {
 	var ctrlFn=app.controller;
+	//register the controller with the controller js file
 	ctrlFn('dogCtrl',this.include('dogController'));
+	ctrlFn('feedCtrl',this.include('feedController'));
 }
 exports.getInstance=function(){
 	return new Ctrl();
