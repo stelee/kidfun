@@ -7,5 +7,6 @@ var config={
 		,{name :'About' , url : '/about', controller: 'aboutCtrl', view: 'views/about.html'}
 	]
 	,'migrationVersion' : 1
+	,'traits_path' : 'application/traits/'
 }
 exports.config=config;

@@ -155,11 +155,10 @@
 	}
 
 	var mix=function(targetClass, traits){
-		for(prop in traits){
+		for(var prop in traits){
 			targetClass.prototype[prop]=traits[prop];
 		}
 	}
-
 	//register alias
 	
 	scope[config.alias.require]=require;
