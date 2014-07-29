@@ -2,7 +2,7 @@ exports.callbackable={
     events:{error:function(error){console.error(error)}},
     on:function(eventname,callback)
     {
-        if(isNull(this.events))
+        if('undefined' === typeof this.events || this.events===null)
         {
             this.events=new Object();
         }
@@ -26,10 +26,14 @@ exports.callbackable={
     },
     trigger:function(eventname)
     {
-        if(typeof this.events[eventname]=="function")
+        if(typeof this.events[eventname]==="function")
         {
             this.events[eventname].apply(this);
-        }else
+        }else if(typeof this.events[eventname]==="string")
+        {
+            console.log(this.events[eventname]);
+        }
+        else
         {
             if(typeof this.events["_lastbindedfunction"]=="function")
             {

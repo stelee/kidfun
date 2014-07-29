@@ -22,8 +22,6 @@ Migration.prototype.run=function(version){
 	db_version=db_version || 0;
 	var migrationArr=new Array();
 
-	debugger;
-
 	if(version>db_version)
 	{
 		for(var i=db_version+1;i<=version;i++)
@@ -45,24 +43,24 @@ Migration.prototype.run=function(version){
 
 Migration.prototype._runMigration=function(direction,migrationArr)
 {
+	var that=this;
 	this.migrationList.setArray(migrationArr);
-	migrationList.each(function(migration,next){
+	this.migrationList.each(function(migration,next){
 		migration[direction](function(){
 			next();
 		},function(error){
 			console.error(error);
-			msgBox.alert("Error happens" + JSON.stringify(error));
 			return;
 		});
 	},function(){
-		onFinished(this);
+		onFinished.call(that);
 	})
 }
 
 //mixin
 mix_traits(Migration,require('application/traits/callbackable').callbackable);
 
-exports.newInstance=function(){
+exports.getInstance=function(){
 	var ret= new Migration();
 	ret.migrationList=require('libs/utils/list').list();
 	return ret;

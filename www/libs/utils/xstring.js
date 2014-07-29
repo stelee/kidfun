@@ -29,7 +29,7 @@ XString.prototype.toString=function(){
 }
 XString.prototype.bind=function(){
 	var reg=/\{\{(\w+.)*\w+\}\}/g;
-	var safeExtract=require('js/libs/utils/list_chain_value.js').safeExtract;
+	var path=require('libs/utils/path').path;
 	if(arguments.length==1){//either this is a single binding or map binding
 		if('string'==typeof(arguments[0])){
 			this._string=this._string.replace(reg,arguments[0]);
@@ -46,7 +46,7 @@ XString.prototype.bind=function(){
 			{
 				var match=matches[i];
 				var prop=match.substring(2,match.length-2);
-				var value=safeExtract.call(dataMap,prop);
+				var value=path(dataMap,prop);
 				if(value!=null)
 				{
 					dataMap2[prop]=value;

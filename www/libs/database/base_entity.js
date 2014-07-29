@@ -1,9 +1,11 @@
 var callbackable=require("application/traits/callbackable").callbackable;
 var xstring=require("libs/utils/xstring").xstring;
-var sqlFormat=xstring.sqlFormat;
+var sqlFormat=require("libs/utils/xstring").sqlFormat;
+var isNull=require("libs/utils/null").isNull;
+
 
 var config={
-	driver: 'libs/db.js'
+	driver: 'libs/database/db.js'
 }
 
 var init=function()
@@ -20,7 +22,6 @@ var init=function()
 }
 
 var BaseEntity=function(){
-	debugger;
 	init.apply(this,arguments);
 }
 
@@ -129,12 +130,12 @@ BaseEntity.prototype.save=function(dataMap,batchFlag)
 	{
 		this.prepareDeleteSql(sqls,ids,dataMap);
 	 }
-	//else if(ddlFlag=='I')
-	// {
-	// 	this.prepareInsertSql(sqls,dataMap);
-	// }
+	else if(ddlFlag=='I')
+	{
+		this.prepareInsertSql(sqls,dataMap);
+	}
 	//if the ddlFlag is I, there should be no deletion of the record. but server is unstable and I have to make this
-	else if(ddlFlag=='U'||ddlFlag=='E' ||ddlFlag=='I')
+	else if(ddlFlag=='U'||ddlFlag=='E')
 	{
 		this.prepareUpdateSql(sqls,ids,dataMap);
 	}

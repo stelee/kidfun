@@ -1,4 +1,5 @@
 'use strict'
+var isNull=require('libs/utils/null').isNull;
 var getValue=function(target,path)
 {
 	var pathArr=path.split(".");

@@ -3,7 +3,13 @@
 	//global injection
 	//Always to be the first of app.js
 	//global.appConfig=require('application/configurations/appConfig').config;
+	require('libs/utils/xdate');
 	var app=angular.module('restoApp',['ngRoute'])
+	var appConfig=require('application/configurations/appConfig').config;
+
+	var migration=require('libs/database/migration').getInstance();
+
+	migration.on("finished","migration finished").on("error","migratione failed").run(appConfig.migrationVersion);
 
 	//Register the global configuration
 	app.provider('appConfig',function AppConfigProvider(){
@@ -15,7 +21,7 @@
 	});
 
 	app.config(['appConfigProvider',function(appConfigProvider){
-		appConfigProvider.appConfig=require('application/configurations/appConfig').config;
+		appConfigProvider.appConfig=appConfig;
 	}]);
 
 	//Register the routers
